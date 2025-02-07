@@ -145,6 +145,7 @@ elif st.session_state.current_step == 2:
         winner = "Pareggio!"
 
     st.subheader(f"🎉 Vincitore: {winner}")
+    st.balloons()
 
     if st.button("Ricomincia Gioco"):
         for key in st.session_state.keys():
