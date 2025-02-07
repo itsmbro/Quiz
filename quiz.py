@@ -72,7 +72,7 @@ questions = [
 
 # Funzione per selezionare domande random
 def get_random_questions():
-    return random.sample(questions, 10)
+    return random.sample(questions, 5)
 
 # Inizializzazione dello stato del gioco
 if 'players' not in st.session_state:
@@ -111,14 +111,15 @@ def get_winner():
 # Interfaccia del gioco
 st.title('Quiz Game')
 
-# Aggiungi il numero di giocatori
+# Aggiungi il numero di giocatori e i loro nickname
 if st.session_state.game_state == 0:  # Se siamo nello stato di attesa
     num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1)
+    
     if st.button("Inizia gioco"):
         st.session_state.num_players = num_players
-        # Crea il dizionario di punteggio per ogni giocatore
+        # Chiedi ai giocatori di inserire i loro nickname
         for i in range(num_players):
-            player_name = f"Giocatore {i + 1}"
+            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}")
             st.session_state.players[player_name] = 0  # Imposta il punteggio iniziale a 0
             st.session_state.questions[player_name] = get_random_questions()  # Assegna le domande random
         st.session_state.game_state = 1  # Passa al primo stato di gioco
@@ -157,4 +158,5 @@ if st.session_state.game_state == 3:
 # Messaggio di fine gioco
 if st.session_state.game_over:
     st.write("Ricarica la pagina per una nuova partita!")
+
 
