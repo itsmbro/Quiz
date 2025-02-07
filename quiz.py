@@ -70,23 +70,6 @@ questions = [
     ]
 
 
-import streamlit as st
-import random
-
-# Lista di domande e risposte
-questions = [
-    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
-    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
-    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
-    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
-    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
-    {"question": "Qual è il pianeta più vicino al Sole?", "options": ["Venere", "Marte", "Mercurio", "Terra"], "answer": "Mercurio"},
-    {"question": "Quante ossa ha il corpo umano adulto?", "options": ["206", "207", "208", "209"], "answer": "206"},
-    {"question": "Chi è il fondatore di Microsoft?", "options": ["Steve Jobs", "Bill Gates", "Mark Zuckerberg", "Larry Page"], "answer": "Bill Gates"},
-    {"question": "Che tipo di animale è il delfino?", "options": ["Pesce", "Mammifero", "Rettili", "Uccello"], "answer": "Mammifero"},
-    {"question": "Qual è la lingua ufficiale del Brasile?", "options": ["Portoghese", "Spagnolo", "Inglese", "Francese"], "answer": "Portoghese"},
-]
-
 # Funzione per selezionare domande random
 def get_random_questions():
     return random.sample(questions, 5)
