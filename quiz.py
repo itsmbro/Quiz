@@ -69,22 +69,93 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
-# Inizializza la variabile
-var = 0
+import streamlit as st
+import random
 
-while True:  # Ciclo infinito che controlla il valore della variabile
-    if var == 0:
-        print("La variabile è zero. Faccio qualcosa per zero.")
-        # Esegui qualche operazione quando var è zero
-        var = 1  # Cambia il valore della variabile per proseguire
-    elif var == 1:
-        print("La variabile è uno. Faccio qualcosa per uno.")
-        # Esegui qualche operazione quando var è uno
-        var = 2  # Cambia il valore della variabile per proseguire
-    elif var == 2:
-        print("La variabile è due. Faccio qualcosa per due.")
-        # Esegui qualche operazione quando var è due
-        var = 0  # Cambia il valore della variabile per tornare a zero
-    else:
-        print("Valore non previsto. Esco dal ciclo.")
-        break  # Esci dal ciclo se la variabile ha un valore imprevisto
+# Lista di domande e risposte
+questions = [
+    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
+    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
+    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
+    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
+    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
+]
+
+# Funzione per selezionare domande random
+def get_random_questions():
+    return random.sample(questions, 5)
+
+# Inizializzazione della variabile di stato
+if 'game_state' not in st.session_state:
+    st.session_state.game_state = 0  # Stato iniziale (0 = gioco non iniziato)
+    st.session_state.players = []  # Lista dei giocatori
+    st.session_state.num_players = 0  # Numero di giocatori
+    st.session_state.current_question = 0  # Indice della domanda
+    st.session_state.current_player_index = 0  # Indice del giocatore corrente
+
+# Funzione per avanzare nel gioco
+def next_state():
+    if st.session_state.game_state == 1:  # Gioco iniziato
+        # Aumenta il numero della domanda
+        st.session_state.current_question += 1
+        if st.session_state.current_question >= 5:  # Se tutte le domande sono state fatte
+            st.session_state.game_state = 3  # Passa allo stato finale
+        else:
+            st.session_state.game_state = 2  # Passa allo stato della domanda successiva
+    elif st.session_state.game_state == 2:  # Stato della domanda successiva
+        # Passa al prossimo giocatore
+        st.session_state.current_player_index = (st.session_state.current_player_index + 1) % st.session_state.num_players
+        st.session_state.game_state = 1  # Torna allo stato del gioco
+    elif st.session_state.game_state == 3:  # Gioco finito
+        st.write("Il gioco è finito!")
+        winner = max(st.session_state.players, key=lambda p: p['score'])  # Trova il vincitore
+        st.write(f"Il vincitore è {winner['name']}!")
+
+# Ciclo principale del gioco (simulato tramite variabili di stato)
+while True:
+    if st.session_state.game_state == 0:  # Se il gioco non è ancora iniziato
+        st.title('Benvenuto al Quiz Game!')
+        num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1)
+        st.session_state.num_players = num_players
+        
+        # Aggiungi un campo per il nickname di ogni giocatore
+        for i in range(num_players):
+            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}")
+            if player_name:
+                st.session_state.players.append({"name": player_name, "score": 0})  # Aggiungi il nome e il punteggio iniziale
+
+        # Bottone per iniziare il gioco
+        if st.button("Inizia gioco!"):
+            if len(st.session_state.players) == num_players:  # Verifica che i nickname siano inseriti
+                st.session_state.game_state = 1  # Inizia il gioco
+                st.write(f"Il gioco è iniziato con {num_players} giocatori: {', '.join([player['name'] for player in st.session_state.players])}")
+                break  # Esci dal ciclo di configurazione iniziale per entrare nel gioco
+    elif st.session_state.game_state == 1:  # Gioco iniziato
+        current_player = st.session_state.players[st.session_state.current_player_index]
+        st.title(f"Turno di {current_player['name']}")
+
+        # Seleziona una domanda random
+        question = get_random_questions()[st.session_state.current_question]
+        st.write(question["question"])
+        answer = st.radio("Scegli una risposta:", question["options"])
+
+        if st.button("Rispondi"):
+            if answer == question["answer"]:
+                st.write("Risposta corretta!")
+                current_player["score"] += 1  # Aumenta il punteggio se la risposta è corretta
+            else:
+                st.write("Risposta sbagliata!")
+
+            # Avanza allo stato successivo
+            next_state()
+
+    elif st.session_state.game_state == 2:  # Stato della domanda successiva
+        st.write(f"Punteggio di {current_player['name']}: {current_player['score']}")
+        st.button("Prossima domanda")
+        next_state()
+
+    elif st.session_state.game_state == 3:  # Gioco finito
+        st.write("Il gioco è finito!")
+        winner = max(st.session_state.players, key=lambda p: p['score'])
+        st.write(f"Il vincitore è {winner['name']} con {winner['score']} punti!")
+        break  # Esci dal ciclo del gioco
