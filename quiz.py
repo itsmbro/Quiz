@@ -70,6 +70,22 @@ questions = [
     ]
 
 
+import streamlit as st
+import random
+
+# Lista di domande e risposte
+questions = [
+    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
+    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
+    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
+    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
+    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
+    {"question": "Qual è il pianeta più vicino al Sole?", "options": ["Venere", "Marte", "Mercurio", "Terra"], "answer": "Mercurio"},
+    {"question": "Quante ossa ha il corpo umano adulto?", "options": ["206", "207", "208", "209"], "answer": "206"},
+    {"question": "Chi è il fondatore di Microsoft?", "options": ["Steve Jobs", "Bill Gates", "Mark Zuckerberg", "Larry Page"], "answer": "Bill Gates"},
+    {"question": "Che tipo di animale è il delfino?", "options": ["Pesce", "Mammifero", "Rettili", "Uccello"], "answer": "Mammifero"},
+    {"question": "Qual è la lingua ufficiale del Brasile?", "options": ["Portoghese", "Spagnolo", "Inglese", "Francese"], "answer": "Portoghese"},
+]
 
 # Funzione per selezionare domande random
 def get_random_questions():
@@ -78,10 +94,10 @@ def get_random_questions():
 # Inizializzazione dello stato del gioco
 if 'players' not in st.session_state:
     st.session_state.players = {}  # Dizionario per i punteggi dei giocatori
-    st.session_state.current_player = None  # Giocatore corrente
-    st.session_state.current_question = 0  # Indice della domanda
+    st.session_state.current_player_index = 0  # Indice del giocatore corrente
+    st.session_state.current_question = 0  # Indice della domanda corrente
     st.session_state.game_state = 0  # Stato iniziale della macchina a stati (0 = attesa)
-    st.session_state.questions = get_random_questions()  # Domande random per ogni giocatore
+    st.session_state.questions = {}  # Domande random per ogni giocatore
     st.session_state.num_players = 0  # Numero di giocatori
     st.session_state.game_over = False  # Flag per segnare la fine del gioco
 
@@ -117,21 +133,22 @@ if st.session_state.game_state == 0:  # Se siamo nello stato di attesa
     num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1)
     if st.button("Inizia gioco"):
         st.session_state.num_players = num_players
+        # Crea il dizionario di punteggio per ogni giocatore
         for i in range(num_players):
             player_name = f"Giocatore {i + 1}"
             st.session_state.players[player_name] = 0  # Imposta il punteggio iniziale a 0
+            st.session_state.questions[player_name] = get_random_questions()  # Assegna le domande random
         st.session_state.game_state = 1  # Passa al primo stato di gioco
 
 # Se il gioco è in corso
 if st.session_state.game_state == 1:
-    # Se è il turno del giocatore
-    if st.session_state.current_player is None:
-        st.session_state.current_player = list(st.session_state.players.keys())[0]  # Primo giocatore
-    player_name = st.session_state.current_player
-    st.write(f"È il turno di: {player_name}")
+    # Ottieni il nome del giocatore corrente
+    current_player = list(st.session_state.players.keys())[st.session_state.current_player_index]
+    st.session_state.current_player = current_player
 
-    # Mostra la domanda
-    question = st.session_state.questions[st.session_state.current_question]
+    # Mostra il nome del giocatore e la domanda
+    st.write(f"È il turno di: {current_player}")
+    question = st.session_state.questions[current_player][st.session_state.current_question]
     st.write(question["question"])
     answer = st.radio("Scegli una risposta:", question["options"])
 
@@ -144,6 +161,8 @@ if st.session_state.game_state == 2:
     # Visualizza il punteggio del giocatore corrente
     st.write(f"Punteggio di {st.session_state.current_player}: {st.session_state.players[st.session_state.current_player]}")
     if st.button("Prossima domanda"):
+        # Passa al prossimo giocatore
+        st.session_state.current_player_index = (st.session_state.current_player_index + 1) % st.session_state.num_players
         next_state()
 
 # Se il gioco è finito
@@ -155,3 +174,4 @@ if st.session_state.game_state == 3:
 # Messaggio di fine gioco
 if st.session_state.game_over:
     st.write("Ricarica la pagina per una nuova partita!")
+
