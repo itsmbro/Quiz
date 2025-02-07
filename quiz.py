@@ -68,7 +68,17 @@ questions = [
     {"question": "Cos'è la legge di Faraday?", "options": ["La legge che descrive la relazione tra variazione del flusso magnetico e forza elettromotrice", "La legge che descrive la forza tra cariche elettriche", "La legge che descrive l'energia cinetica", "La legge che descrive la velocità della luce"], "answer": "La legge che descrive la relazione tra variazione del flusso magnetico e forza elettromotrice"},
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
+import streamlit as st
+import random
 
+# Lista di domande e risposte
+questions = [
+    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
+    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
+    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
+    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
+    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
+]
 
 # Funzione per selezionare domande random
 def get_random_questions():
@@ -104,17 +114,19 @@ def next_state():
 while True:
     if st.session_state.game_state == 0:  # Se il gioco non è ancora iniziato
         st.title('Benvenuto al Quiz Game!')
-        num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1)
+        
+        # Seleziona il numero di giocatori
+        num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1, key="num_players_input")
         st.session_state.num_players = num_players
         
         # Aggiungi un campo per il nickname di ogni giocatore
         for i in range(num_players):
-            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}")
+            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}_input")
             if player_name:
                 st.session_state.players.append({"name": player_name, "score": 0})  # Aggiungi il nome e il punteggio iniziale
 
         # Bottone per iniziare il gioco
-        if st.button("Inizia gioco!"):
+        if st.button("Inizia gioco!", key="start_game_button"):
             if len(st.session_state.players) == num_players:  # Verifica che i nickname siano inseriti
                 st.session_state.game_state = 1  # Inizia il gioco
                 st.write(f"Il gioco è iniziato con {num_players} giocatori: {', '.join([player['name'] for player in st.session_state.players])}")
@@ -128,7 +140,7 @@ while True:
         st.write(question["question"])
         answer = st.radio("Scegli una risposta:", question["options"])
 
-        if st.button("Rispondi"):
+        if st.button("Rispondi", key=f"answer_button_{st.session_state.current_question}"):
             if answer == question["answer"]:
                 st.write("Risposta corretta!")
                 current_player["score"] += 1  # Aumenta il punteggio se la risposta è corretta
@@ -140,7 +152,7 @@ while True:
 
     elif st.session_state.game_state == 2:  # Stato della domanda successiva
         st.write(f"Punteggio di {current_player['name']}: {current_player['score']}")
-        st.button("Prossima domanda")
+        st.button("Prossima domanda", key="next_question_button")
         next_state()
 
     elif st.session_state.game_state == 3:  # Gioco finito
@@ -148,3 +160,4 @@ while True:
         winner = max(st.session_state.players, key=lambda p: p['score'])
         st.write(f"Il vincitore è {winner['name']} con {winner['score']} punti!")
         break  # Esci dal ciclo del gioco
+
