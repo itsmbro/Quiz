@@ -90,6 +90,10 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
+
+
+
+
 # Fase 1: Inserimento dei nickname
 if st.session_state.current_step == 0:
     st.title("🎯 Gioco di Quiz Multiplayer")
@@ -109,21 +113,23 @@ elif st.session_state.current_step == 1:
     current_questions = st.session_state.questions_p1 if st.session_state.current_player == 0 else st.session_state.questions_p2
     question_data = current_questions[st.session_state.current_question]
 
-    st.write(f"Domanda {st.session_state.current_question + 1}: {question_data['question']}")
-    selected_option = st.radio("Scegli la risposta:", question_data['options'], key=f"q{st.session_state.current_player}_{st.session_state.current_question}")
+    with st.form(key=f"form_{st.session_state.current_player}_{st.session_state.current_question}"):
+        st.write(f"Domanda {st.session_state.current_question + 1}: {question_data['question']}")
+        selected_option = st.radio("Scegli la risposta:", question_data['options'])
+        submit = st.form_submit_button("Prossima Domanda")
 
-    if st.button("Prossima Domanda"):
-        if selected_option == question_data['answer']:
-            st.session_state.scores[st.session_state.current_player] += 1
+        if submit:
+            if selected_option == question_data['answer']:
+                st.session_state.scores[st.session_state.current_player] += 1
 
-        st.session_state.current_question += 1
+            st.session_state.current_question += 1
 
-        if st.session_state.current_question >= 5:
-            st.session_state.current_question = 0
-            st.session_state.current_player += 1
+            if st.session_state.current_question >= 5:
+                st.session_state.current_question = 0
+                st.session_state.current_player += 1
 
-        if st.session_state.current_player >= 2:
-            st.session_state.current_step = 2
+            if st.session_state.current_player >= 2:
+                st.session_state.current_step = 2
 
 # Fase 3: Risultati finali
 elif st.session_state.current_step == 2:
@@ -143,11 +149,6 @@ elif st.session_state.current_step == 2:
     if st.button("Ricomincia Gioco"):
         for key in st.session_state.keys():
             del st.session_state[key]
-
-
-
-
-
 
 
 
