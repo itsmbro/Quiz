@@ -73,24 +73,27 @@ questions = [
 def play_game(players):
     scores = {player: 0 for player in players}
     total_rounds = 5  # 5 round
+    question_index = 0  # Indice per gestire la domanda corrente
 
-    for round_num in range(total_rounds):
+    # Mostra la domanda per il primo round
+    while question_index < total_rounds:
         for player in players:
-            # Scegli una domanda casuale
+            # Scegli una domanda casuale per il giocatore corrente
             question = random.choice(questions)
 
-            # Mostra la domanda al giocatore
+            # Mostra la domanda e le opzioni
             st.subheader(f"Domanda per {player}: {question['question']}")
-            answer = st.radio("Scegli una risposta", question["options"], key=f"question_{round_num}_{player}")
+            answer = st.radio("Scegli una risposta", question["options"], key=f"question_{question_index}_{player}")
 
-            if answer == question["answer"]:
-                scores[player] += 1
+            # Aggiungi un pulsante per passare alla prossima domanda
+            next_button = st.button(f"Passa alla prossima domanda per {player}", key=f"next_{question_index}_{player}")
 
-            # Mostra il punteggio attuale
-            st.write(f"Punteggio di {player}: {scores[player]}")
-            
-            # Aggiungi una pausa per un'esperienza utente più fluida (opzionale)
-            time.sleep(1)
+            if next_button:
+                if answer == question["answer"]:
+                    scores[player] += 1  # Incrementa il punteggio se la risposta è corretta
+                question_index += 1
+                break  # Passa alla domanda successiva
+        time.sleep(1)
 
     return scores
 
