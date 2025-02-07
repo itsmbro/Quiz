@@ -85,28 +85,24 @@ def show_intro():
 # Funzione per giocare
 def play_game(players):
     scores = {player: 0 for player in players}
-    rounds = 5
     
-    for round_num in range(1, rounds + 1):
-        st.subheader(f"Round {round_num}")
-        random.shuffle(questions)
-        
+    for round_num in range(5):  # 5 round
         for player in players:
-            st.write(f"{player}'s turn!")
-            question = questions[round_num - 1]  # Assicurati che le domande siano selezionate correttamente
+            # Prendi una domanda casuale
+            question = random.choice(questions)
             
-            st.write(question["question"])
-            answer = st.radio("Scegli una risposta", question["options"])
-            
+            # Usa un ID unico per ogni domanda
+            question_id = f"question_{round_num}_{player}"
+
+            answer = st.radio(f"Domanda per {player}: {question['question']}", 
+                             question["options"], 
+                             key=question_id)  # Aggiungi l'ID unico
+
             if answer == question["answer"]:
-                st.write("Risposta corretta!")
                 scores[player] += 1
-            else:
-                st.write(f"Risposta sbagliata. La risposta corretta era: {question['answer']}")
-            
-            time.sleep(1)  # Pausa di 1 secondo tra le risposte
-    
+
     return scores
+
 
 # Funzione per mostrare il vincitore con animazione
 def show_winner(scores):
