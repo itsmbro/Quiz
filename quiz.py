@@ -70,6 +70,7 @@ questions = [
     ]
 
 
+
 # Funzione per selezionare domande random
 def get_random_questions():
     return random.sample(questions, 5)
@@ -158,5 +159,6 @@ if st.session_state.game_state == 3:
 # Messaggio di fine gioco
 if st.session_state.game_over:
     st.write("Ricarica la pagina per una nuova partita!")
+
 
 
