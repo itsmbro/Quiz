@@ -83,7 +83,9 @@ def play_game(players):
 
             # Mostra la domanda e le opzioni
             st.subheader(f"Domanda per {player}: {question['question']}")
-            answer = st.radio("Scegli una risposta", question["options"], key=f"question_{question_index}_{player}")
+            
+            # Aggiungi una chiave univoca per ciascun giocatore e domanda
+            answer = st.radio(f"Scegli una risposta per {player}", question["options"], key=f"question_{question_index}_{player}")
 
             # Aggiungi un pulsante per passare alla prossima domanda
             next_button = st.button(f"Passa alla prossima domanda per {player}", key=f"next_{question_index}_{player}")
