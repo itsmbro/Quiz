@@ -69,59 +69,48 @@ questions = [
     ]
 
 
-# Funzione per mostrare la schermata iniziale
-def show_intro():
-    st.title("Quiz sulla Scienza e sulla Fisica")
-    st.write("Benvenuto! Imposta il numero di giocatori e i loro nickname.")
-    
-    num_players = st.slider("Seleziona il numero di giocatori", 1, 4, 1)
-    players = {}
-    
-    for i in range(num_players):
-        players[f"Player {i+1}"] = st.text_input(f"Nome del giocatore {i+1}", f"Giocatore {i+1}")
-    
-    return players
 
-# Funzione per giocare
 def play_game(players):
     scores = {player: 0 for player in players}
-    
-    for round_num in range(5):  # 5 round
-        for player in players:
-            # Prendi una domanda casuale
-            question = random.choice(questions)
-            
-            # Usa un ID unico per ogni domanda
-            question_id = f"question_{round_num}_{player}"
+    total_rounds = 5  # 5 round
 
-            answer = st.radio(f"Domanda per {player}: {question['question']}", 
-                             question["options"], 
-                             key=question_id)  # Aggiungi l'ID unico
+    for round_num in range(total_rounds):
+        for player in players:
+            # Scegli una domanda casuale
+            question = random.choice(questions)
+
+            # Mostra la domanda al giocatore
+            st.subheader(f"Domanda per {player}: {question['question']}")
+            answer = st.radio("Scegli una risposta", question["options"], key=f"question_{round_num}_{player}")
 
             if answer == question["answer"]:
                 scores[player] += 1
 
+            # Mostra il punteggio attuale
+            st.write(f"Punteggio di {player}: {scores[player]}")
+            
+            # Aggiungi una pausa per un'esperienza utente più fluida (opzionale)
+            time.sleep(1)
+
     return scores
 
-
-# Funzione per mostrare il vincitore con animazione
-def show_winner(scores):
-    winner = max(scores, key=scores.get)
-    st.write(f"Il vincitore è {winner} con {scores[winner]} punti!")
-    
-    # Animazione finale (per esempio, un effetto di scrittura del nome vincitore)
-    for char in winner:
-        st.markdown(f"<h1 style='color: red;'>{char}</h1>", unsafe_allow_html=True)
-        time.sleep(0.2)
-        st.experimental_rerun()
-
-# Funzione principale che esegue il gioco
 def main():
-    players = show_intro()
-    if st.button("Inizia il quiz"):
-        scores = play_game(players)
-        show_winner(scores)
+    # Imposta il numero di giocatori e i loro nickname
+    num_players = st.number_input("Numero di giocatori (max 4):", min_value=1, max_value=4, value=1)
+    players = []
 
-# Avvio del gioco
+    for i in range(num_players):
+        nickname = st.text_input(f"Nickname del giocatore {i+1}:")
+        players.append(nickname)
+
+    if st.button("Inizia il quiz"):
+        if len(players) > 0:
+            # Avvia il gioco
+            scores = play_game(players)
+
+            # Mostra il vincitore
+            winner = max(scores, key=scores.get)
+            st.subheader(f"Il vincitore è {winner} con {scores[winner]} punti!")
+
 if __name__ == "__main__":
     main()
