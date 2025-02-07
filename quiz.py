@@ -127,7 +127,7 @@ if st.session_state.game_state == 0:
     players[1] = st.text_input("Nome Giocatore 2", key="player2")
     
     if st.button("Avvia Gioco"):
-        if st.session_state.players[0] and st.session_state.players[1]:
+        if players[0] and players[1]:
             reset_game()  # Resetta e mescola le domande
             st.session_state.game_state = 1  # Inizia con il giocatore 1
         else:
