@@ -69,7 +69,7 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
-
+players[]
 
 # Inizializza lo stato della sessione
 if 'game_state' not in st.session_state:
@@ -123,8 +123,8 @@ if st.session_state.game_state == 0:
     st.title("🎯 Gioco di Quiz Multiplayer")
     st.write("Inserisci i nomi dei due giocatori per iniziare:")
     
-    st.session_state.players[0] = st.text_input("Nome Giocatore 1", key="player1")
-    st.session_state.players[1] = st.text_input("Nome Giocatore 2", key="player2")
+    players[0] = st.text_input("Nome Giocatore 1", key="player1")
+    players[1] = st.text_input("Nome Giocatore 2", key="player2")
     
     if st.button("Avvia Gioco"):
         if st.session_state.players[0] and st.session_state.players[1]:
@@ -135,12 +135,12 @@ if st.session_state.game_state == 0:
 
 # Domande per il Giocatore 1
 elif st.session_state.game_state == 1:
-    st.header("🎮 Turno di {st.session_state.players[0]}")
+    st.header(f"🎮 Turno di {players[0]}")
     show_question(0)
 
 # Domande per il Giocatore 2
 elif st.session_state.game_state == 2:
-    st.header("🎮 Turno di {st.session_state.players[1]}")
+    st.header(f"🎮 Turno di {players[1]}")
     show_question(1)
 
 # Schermata finale con i punteggi
