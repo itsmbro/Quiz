@@ -3,6 +3,27 @@ import random
 import time
 
 
+
+
+
+
+# Inizializzazione dello stato della sessione
+if 'players' not in st.session_state:
+    st.session_state.players = ["", ""]
+if 'current_step' not in st.session_state:
+    st.session_state.current_step = 0
+if 'current_player' not in st.session_state:
+    st.session_state.current_player = 0
+if 'current_question' not in st.session_state:
+    st.session_state.current_question = 0
+if 'scores' not in st.session_state:
+    st.session_state.scores = [0, 0]
+if 'questions_p1' not in st.session_state:
+    st.session_state.questions_p1 = []
+if 'questions_p2' not in st.session_state:
+    st.session_state.questions_p2 = []
+
+
 # Lista di domande e risposte (inserisci le tue domande e risposte)
 questions = [
     {"question": "Qual è la velocità della luce?", "options": ["300.000 km/s", "150.000 km/s", "400.000 km/s", "200.000 km/s"], "answer": "300.000 km/s"},
@@ -69,92 +90,66 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
-players=["",""]
-
-# Inizializza lo stato della sessione
-if 'game_state' not in st.session_state:
-    st.session_state.game_state = 0  # 0: schermata iniziale, 1: domande giocatore 1, 2: domande giocatore 2, 3: fine gioco
-    st.session_state.players = ["", ""]
-    st.session_state.scores = [0, 0]
-    st.session_state.current_question_index = 0
-    st.session_state.questions_player1 = []
-    st.session_state.questions_player2 = []
-
-
-
-# Funzione per resettare il gioco
-def reset_game():
-    st.session_state.game_state = 0
-    st.session_state.players = ["", ""]
-    st.session_state.scores = [0, 0]
-    st.session_state.current_question_index = 0
-    st.session_state.questions_player1 = random.sample(questions, 5)
-    st.session_state.questions_player2 = random.sample(questions, 5)
-
-# Funzione per mostrare una domanda
-def show_question(player_index):
-    player = players[player_index]
-    current_question_list = st.session_state.questions_player1 if player_index == 0 else st.session_state.questions_player2
-    question = current_question_list[st.session_state.current_question_index]
-
-    st.subheader(f"Domanda per {player}:")
-    st.write(question["question"])
-    answer = st.radio("Scegli la risposta:", question["options"], key=f"answer_{st.session_state.current_question_index}")
-
-    if st.button("Conferma risposta"):
-        if answer == question["answer"]:
-            st.success("Risposta corretta!")
-            st.session_state.scores[player_index] += 1
-        else:
-            st.error(f"Risposta errata. La risposta corretta era: {question['answer']}")
-
-        st.session_state.current_question_index += 1
-
-        # Passaggio al prossimo turno
-        if st.session_state.current_question_index >= 5:
-            if st.session_state.game_state == 1:
-                st.session_state.game_state = 2  # Passa al giocatore 2
-            else:
-                st.session_state.game_state = 3  # Fine del gioco
-            st.session_state.current_question_index = 0
-
-# Schermata iniziale
-if st.session_state.game_state == 0:
+# Fase 1: Inserimento dei nickname
+if st.session_state.current_step == 0:
     st.title("🎯 Gioco di Quiz Multiplayer")
-    st.write("Inserisci i nomi dei due giocatori per iniziare:")
-    
-    players[0] = st.text_input("Nome Giocatore 1", key="player1")
-    players[1] = st.text_input("Nome Giocatore 2", key="player2")
-    
-    if st.button("Avvia Gioco"):
-        if players[0] and players[1]:
-            reset_game()  # Resetta e mescola le domande
-            st.session_state.game_state = 1  # Inizia con il giocatore 1
-        else:
-            st.warning("Inserisci entrambi i nomi per continuare.")
+    st.session_state.players[0] = st.text_input("Nome Giocatore 1", key="player1")
+    st.session_state.players[1] = st.text_input("Nome Giocatore 2", key="player2")
 
-# Domande per il Giocatore 1
-elif st.session_state.game_state == 1:
-    st.header(f"🎮 Turno di {players[0]}")
-    show_question(0)
+    if st.button("Avvia Gioco") and st.session_state.players[0] and st.session_state.players[1]:
+        st.session_state.current_step = 1
+        st.session_state.questions_p1 = random.sample(questions, 5)
+        st.session_state.questions_p2 = random.sample(questions, 5)
 
-# Domande per il Giocatore 2
-elif st.session_state.game_state == 2:
-    st.header(f"🎮 Turno di {players[1]}")
-    show_question(1)
+# Fase 2: Turno di gioco
+elif st.session_state.current_step == 1:
+    player = st.session_state.players[st.session_state.current_player]
+    st.header(f"🎮 Turno di {player}")
 
-# Schermata finale con i punteggi
-elif st.session_state.game_state == 3:
+    current_questions = st.session_state.questions_p1 if st.session_state.current_player == 0 else st.session_state.questions_p2
+    question_data = current_questions[st.session_state.current_question]
+
+    st.write(f"Domanda {st.session_state.current_question + 1}: {question_data['question']}")
+    selected_option = st.radio("Scegli la risposta:", question_data['options'], key=f"q{st.session_state.current_player}_{st.session_state.current_question}")
+
+    if st.button("Prossima Domanda"):
+        if selected_option == question_data['answer']:
+            st.session_state.scores[st.session_state.current_player] += 1
+
+        st.session_state.current_question += 1
+
+        if st.session_state.current_question >= 5:
+            st.session_state.current_question = 0
+            st.session_state.current_player += 1
+
+        if st.session_state.current_player >= 2:
+            st.session_state.current_step = 2
+
+# Fase 3: Risultati finali
+elif st.session_state.current_step == 2:
     st.title("🏆 Risultati Finali")
-    st.write(f"**{st.session_state.players[0]}:** {st.session_state.scores[0]} punti")
-    st.write(f"**{st.session_state.players[1]}:** {st.session_state.scores[1]} punti")
-    
-    if st.session_state.scores[0] > st.session_state.scores[1]:
-        st.success(f"🎉 Il vincitore è {st.session_state.players[0]}!")
-    elif st.session_state.scores[0] < st.session_state.scores[1]:
-        st.success(f"🎉 Il vincitore è {st.session_state.players[1]}!")
-    else:
-        st.info("🤝 È un pareggio!")
+    st.write(f"{st.session_state.players[0]}: {st.session_state.scores[0]} punti")
+    st.write(f"{st.session_state.players[1]}: {st.session_state.scores[1]} punti")
 
-    if st.button("Gioca di nuovo"):
-        reset_game()
+    if st.session_state.scores[0] > st.session_state.scores[1]:
+        winner = st.session_state.players[0]
+    elif st.session_state.scores[1] > st.session_state.scores[0]:
+        winner = st.session_state.players[1]
+    else:
+        winner = "Pareggio!"
+
+    st.subheader(f"🎉 Vincitore: {winner}")
+
+    if st.button("Ricomincia Gioco"):
+        for key in st.session_state.keys():
+            del st.session_state[key]
+
+
+
+
+
+
+
+
+
+
