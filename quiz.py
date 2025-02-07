@@ -59,8 +59,24 @@ questions = [
     {"question": "Quale fenomeno fisico descrive la rifrazione?", "options": ["Il cambiamento di direzione della luce quando passa da un mezzo a un altro", "L'emissione di radiazioni", "La riflessione della luce", "La propagazione del suono"], "answer": "Il cambiamento di direzione della luce quando passa da un mezzo a un altro"},
     {"question": "Qual è la legge di Coulomb?", "options": ["F = k * (q1 * q2) / r^2", "F = I * R", "F = m * a", "F = G * (m1 * m2) / r^2"], "answer": "F = k * (q1 * q2) / r^2"},
     {"question": "Cos'è l'effetto fotoelettrico?", "options": ["Emissione di elettroni da un materiale quando illuminato", "Emissione di luce da un materiale quando riscaldato", "Assorbimento di radiazioni da parte di un atomo", "Radiazione prodotta dalle particelle subatomiche"], "answer": "Emissione di elettroni da un materiale quando illuminato"},
-    {"question": "Che cos'è la termodinamica?", "options": ["Lo studio delle particelle subatomiche", "Lo studio delle leggi del calore e dell'energia", "Lo studio del comportamento degli elettroni", "Lo studio della gravità"], "answer": "Lo studio delle leggi del calore e dell'energia"}
+    {"question": "Che cos'è la termodinamica?", "options": ["Lo studio delle particelle subatomiche", "Lo studio delle leggi del calore e dell'energia", "Lo studio del comportamento degli elettroni", "Lo studio della gravità"], "answer": "Lo studio delle leggi del calore e dell'energia"},
+    {"question": "Qual è la formula per calcolare la densità?", "options": ["m / V", "F * d", "V / m", "P * A"], "answer": "m / V"},
+    {"question": "Quale unità di misura rappresenta il Joule?", "options": ["Forza", "Energia", "Temperatura", "Pressione"], "answer": "Energia"},
+    {"question": "Cosa rappresenta la seconda legge di Newton?", "options": ["F = m * a", "E = mc²", "p = m * v", "V = I * R"], "answer": "F = m * a"},
+    {"question": "Quale grandezza fisica si misura in Pascal?", "options": ["Velocità", "Pressione", "Energia", "Temperatura"], "answer": "Pressione"},
+    {"question": "Qual è la velocità del suono nell’aria a temperatura ambiente?", "options": ["1500 m/s", "343 m/s", "1200 m/s", "299.792 m/s"], "answer": "343 m/s"},
+    {"question": "Qual è la costante di gravità universale (G)?", "options": ["9.8 m/s²", "6.67 × 10⁻¹¹ N·m²/kg²", "3 × 10⁸ m/s", "1.6 × 10⁻¹⁹ C"], "answer": "6.67 × 10⁻¹¹ N·m²/kg²"},
+    {"question": "Cosa rappresenta la quantità di moto?", "options": ["Il prodotto tra massa e velocità", "Il rapporto tra forza e accelerazione", "L’energia totale di un corpo", "La resistenza di un materiale"], "answer": "Il prodotto tra massa e velocità"},
+    {"question": "Quale tra questi fenomeni è dovuto all’effetto Doppler?", "options": ["Cambiamento di colore delle stelle in movimento", "Propagazione della luce attraverso un prisma", "Curvatura della luce vicino a un buco nero", "Polarizzazione della luce"], "answer": "Cambiamento di colore delle stelle in movimento"},
+    {"question": "In un circuito elettrico, cosa misura un voltmetro?", "options": ["Corrente elettrica", "Differenza di potenziale", "Resistenza elettrica", "Potenza dissipata"], "answer": "Differenza di potenziale"},
+    {"question": "Qual è la formula per la legge di conservazione dell’energia meccanica?", "options": ["E = K + U", "F = m * a", "P = V * I", "W = F * d"], "answer": "E = K + U"},
+    {"question": "Cos'è un’onda longitudinale?", "options": ["Un'onda in cui la direzione di propagazione coincide con la direzione di oscillazione", "Un'onda che si propaga solo nel vuoto", "Un'onda elettromagnetica", "Un'onda visibile a occhio nudo"], "answer": "Un'onda in cui la direzione di propagazione coincide con la direzione di oscillazione"},
+    {"question": "Cosa rappresenta il principio di Archimede?", "options": ["Un corpo immerso in un fluido riceve una spinta verso l'alto pari al peso del fluido spostato", "L’energia totale di un sistema isolato resta costante", "La velocità della luce è costante in tutti i sistemi di riferimento", "La forza è uguale al prodotto tra massa e accelerazione"], "answer": "Un corpo immerso in un fluido riceve una spinta verso l'alto pari al peso del fluido spostato"},
+    {"question": "Qual è la formula della legge di Hooke?", "options": ["F = -k * x", "F = m * a", "P = V * I", "E = m * c²"], "answer": "F = -k * x"},
+    {"question": "Quale particella subatomica ha carica negativa?", "options": ["Protone", "Neutrone", "Elettrone", "Fotone"], "answer": "Elettrone"},
+    {"question": "Cosa descrive il principio di conservazione della quantità di moto?", "options": ["La quantità di moto totale di un sistema isolato rimane costante", "L’energia può essere creata o distrutta", "La forza è sempre perpendicolare alla velocità", "La massa di un corpo può variare in condizioni normali"], "answer": "La quantità di moto totale di un sistema isolato rimane costante"}
 ]
+
 
 
 
