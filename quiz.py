@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 
-st.session_state.game_state == 0
+
 # Lista di domande e risposte (inserisci le tue domande e risposte)
 questions = [
     {"question": "Qual è la velocità della luce?", "options": ["300.000 km/s", "150.000 km/s", "400.000 km/s", "200.000 km/s"], "answer": "300.000 km/s"},
