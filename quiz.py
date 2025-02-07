@@ -68,17 +68,8 @@ questions = [
     {"question": "Cos'è la legge di Faraday?", "options": ["La legge che descrive la relazione tra variazione del flusso magnetico e forza elettromotrice", "La legge che descrive la forza tra cariche elettriche", "La legge che descrive l'energia cinetica", "La legge che descrive la velocità della luce"], "answer": "La legge che descrive la relazione tra variazione del flusso magnetico e forza elettromotrice"},
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
-import streamlit as st
-import random
 
-# Lista di domande e risposte
-questions = [
-    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
-    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
-    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
-    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
-    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
-]
+
 
 # Funzione per selezionare domande random
 def get_random_questions():
@@ -121,9 +112,11 @@ while True:
         
         # Aggiungi un campo per il nickname di ogni giocatore
         for i in range(num_players):
-            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}_input")
+            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}_input")  # Chiave unica per ogni input
             if player_name:
-                st.session_state.players.append({"name": player_name, "score": 0})  # Aggiungi il nome e il punteggio iniziale
+                # Assicurati che il giocatore venga aggiunto alla lista solo se il nome è stato inserito
+                if len(st.session_state.players) < num_players:  # Aggiungi solo se il numero di giocatori è inferiore al limite
+                    st.session_state.players.append({"name": player_name, "score": 0})  
 
         # Bottone per iniziare il gioco
         if st.button("Inizia gioco!", key="start_game_button"):
