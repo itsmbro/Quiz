@@ -69,17 +69,6 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
-import streamlit as st
-import random
-
-# Lista di domande e risposte
-questions = [
-    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
-    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
-    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
-    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
-    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
-]
 
 # Funzione per selezionare domande random
 def get_random_questions():
