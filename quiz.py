@@ -135,12 +135,12 @@ if st.session_state.game_state == 0:
 
 # Domande per il Giocatore 1
 elif st.session_state.game_state == 1:
-    st.header(f"🎮 Turno di {st.session_state.players[0]}")
+    st.header("🎮 Turno di {st.session_state.players[0]}")
     show_question(0)
 
 # Domande per il Giocatore 2
 elif st.session_state.game_state == 2:
-    st.header(f"🎮 Turno di {st.session_state.players[1]}")
+    st.header("🎮 Turno di {st.session_state.players[1]}")
     show_question(1)
 
 # Schermata finale con i punteggi
