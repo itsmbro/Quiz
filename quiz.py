@@ -76,24 +76,23 @@ def get_random_questions():
 
 # Inizializzazione dello stato del gioco
 if 'score' not in st.session_state:
-    st.session_state.score = 0
+    st.session_state.players = {}  # Dizionario per i punteggi dei giocatori
     st.session_state.current_question = 0
-    st.session_state.players = {}
     st.session_state.questions = get_random_questions()
 
 # Funzione per la domanda successiva
-def next_question(player_name):
+def next_question():
     st.session_state.current_question += 1
     if st.session_state.current_question >= 5:
         # Mostra il punteggio finale e il vincitore
         winner = max(st.session_state.players, key=st.session_state.players.get)
         st.write(f'Il gioco è finito! Il vincitore è {winner} con {st.session_state.players[winner]} punti!')
-        st.session_state.score = 0
-        st.session_state.current_question = 0
         st.session_state.players.clear()
+        st.session_state.current_question = 0
         st.session_state.questions = get_random_questions()
     else:
-        st.session_state.players[player_name] = st.session_state.players.get(player_name, 0)
+        # Procede alla domanda successiva
+        pass
 
 # Interfaccia del gioco
 st.title('Quiz Game')
@@ -120,7 +119,7 @@ if player_name:
         else:
             st.write("Risposta sbagliata!")
 
-        next_question(player_name)
+        next_question()
 
 else:
     st.write("Per giocare, inserisci il tuo nome!")
