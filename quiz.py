@@ -93,7 +93,7 @@ def reset_game():
 
 # Funzione per mostrare una domanda
 def show_question(player_index):
-    player = st.session_state.players[player_index]
+    player = players[player_index]
     current_question_list = st.session_state.questions_player1 if player_index == 0 else st.session_state.questions_player2
     question = current_question_list[st.session_state.current_question_index]
 
