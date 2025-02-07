@@ -70,52 +70,57 @@ questions = [
 
 
 
-def play_game(players):
-    scores = {player: 0 for player in players}
-    total_rounds = 5  # 5 round
-    question_index = 0  # Indice per gestire la domanda corrente
+# Funzione per selezionare domande random
+def get_random_questions():
+    return random.sample(questions, 5)
 
-    # Mostra la domanda per il primo round
-    while question_index < total_rounds:
-        for player in players:
-            # Scegli una domanda casuale per il giocatore corrente
-            question = random.choice(questions)
+# Inizializzazione dello stato del gioco
+if 'score' not in st.session_state:
+    st.session_state.score = 0
+    st.session_state.current_question = 0
+    st.session_state.players = {}
+    st.session_state.questions = get_random_questions()
 
-            # Mostra la domanda e le opzioni
-            st.subheader(f"Domanda per {player}: {question['question']}")
-            
-            # Aggiungi una chiave univoca per ciascun giocatore e domanda
-            answer = st.radio(f"Scegli una risposta per {player}", question["options"], key=f"question_{question_index}_{player}")
+# Funzione per la domanda successiva
+def next_question(player_name):
+    st.session_state.current_question += 1
+    if st.session_state.current_question >= 5:
+        # Mostra il punteggio finale e il vincitore
+        winner = max(st.session_state.players, key=st.session_state.players.get)
+        st.write(f'Il gioco è finito! Il vincitore è {winner} con {st.session_state.players[winner]} punti!')
+        st.session_state.score = 0
+        st.session_state.current_question = 0
+        st.session_state.players.clear()
+        st.session_state.questions = get_random_questions()
+    else:
+        st.session_state.players[player_name] = st.session_state.players.get(player_name, 0)
 
-            # Aggiungi un pulsante per passare alla prossima domanda
-            next_button = st.button(f"Passa alla prossima domanda per {player}", key=f"next_{question_index}_{player}")
+# Interfaccia del gioco
+st.title('Quiz Game')
 
-            if next_button:
-                if answer == question["answer"]:
-                    scores[player] += 1  # Incrementa il punteggio se la risposta è corretta
-                question_index += 1
-                break  # Passa alla domanda successiva
-        time.sleep(1)
+# Aggiungi il nome del giocatore
+player_name = st.text_input("Inserisci il tuo nome:", "")
 
-    return scores
+if player_name:
+    if player_name not in st.session_state.players:
+        st.session_state.players[player_name] = 0
 
-def main():
-    # Imposta il numero di giocatori e i loro nickname
-    num_players = st.number_input("Numero di giocatori (max 4):", min_value=1, max_value=4, value=1)
-    players = []
+    # Mostra la domanda attuale
+    question = st.session_state.questions[st.session_state.current_question]
+    st.write(question["question"])
+    
+    # Mostra le opzioni
+    answer = st.radio("Scegli una risposta:", question["options"])
 
-    for i in range(num_players):
-        nickname = st.text_input(f"Nickname del giocatore {i+1}:")
-        players.append(nickname)
+    # Controlla la risposta
+    if st.button("Invia risposta"):
+        if answer == question["answer"]:
+            st.session_state.players[player_name] += 1
+            st.write("Risposta corretta!")
+        else:
+            st.write("Risposta sbagliata!")
 
-    if st.button("Inizia il quiz"):
-        if len(players) > 0:
-            # Avvia il gioco
-            scores = play_game(players)
+        next_question(player_name)
 
-            # Mostra il vincitore
-            winner = max(scores, key=scores.get)
-            st.subheader(f"Il vincitore è {winner} con {scores[winner]} punti!")
-
-if __name__ == "__main__":
-    main()
+else:
+    st.write("Per giocare, inserisci il tuo nome!")
