@@ -72,7 +72,7 @@ questions = [
 
 # Funzione per selezionare domande random
 def get_random_questions():
-    return random.sample(questions, 5)
+    return random.sample(questions, 10)
 
 # Inizializzazione dello stato del gioco
 if 'players' not in st.session_state:
