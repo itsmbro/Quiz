@@ -75,44 +75,87 @@ questions = [
 
 
 
-# Funzione per miscelare le domande
-def get_question():
-    return random.choice(questions)
 
-# Funzione di gioco
-def play_quiz():
-    st.title("Quiz Game")
-    st.write("Benvenuto al gioco del quiz! Rispondi alle domande e ottieni il punteggio!")
 
-    if "score" not in st.session_state:
-        st.session_state.score = 0
+# Inizializza lo stato della sessione
+if 'game_state' not in st.session_state:
+    st.session_state.game_state = 0  # 0: schermata iniziale, 1: domande giocatore 1, 2: domande giocatore 2, 3: fine gioco
+    st.session_state.players = ["", ""]
+    st.session_state.scores = [0, 0]
+    st.session_state.current_question_index = 0
 
-    # Nome del giocatore
-    player_name = st.text_input("Inserisci il tuo nome:")
+
+
+# Funzione per resettare il gioco
+def reset_game():
+    st.session_state.game_state = 0
+    st.session_state.players = ["", ""]
+    st.session_state.scores = [0, 0]
+    st.session_state.current_question_index = 0
+    random.shuffle(questions)  # Mescola le domande
+
+# Funzione per mostrare una domanda
+def show_question(player_index):
+    question = questions[st.session_state.current_question_index]
+    st.write(f"**Domanda per {st.session_state.players[player_index]}:**")
+    st.write(question["question"])
+    answer = st.text_input("Inserisci la tua risposta:", key=f"answer_{st.session_state.current_question_index}")
     
-    if player_name:
-        question_data = get_question()
-
-        # Visualizzare la domanda e le opzioni
-        st.write(question_data["question"])
-        answer = st.radio("Scegli una risposta:", question_data["options"])
-
-        # Verifica della risposta
-        if st.button("Conferma risposta"):
-            if answer == question_data["answer"]:
-                st.session_state.score += 1
-                st.success("Risposta corretta!")
+    if st.button("Conferma risposta"):
+        if answer.strip().lower() == question["answer"].lower():
+            st.success("Risposta corretta!")
+            st.session_state.scores[player_index] += 1
+        else:
+            st.error(f"Risposta errata. La risposta corretta era: {question['answer']}")
+        
+        # Passa alla prossima domanda o al prossimo giocatore
+        st.session_state.current_question_index += 1
+        if st.session_state.current_question_index >= len(questions):
+            if st.session_state.game_state == 1:
+                st.session_state.game_state = 2  # Passa al giocatore 2
+                st.session_state.current_question_index = 0
             else:
-                st.error("Risposta errata.")
+                st.session_state.game_state = 3  # Fine del gioco
 
-            st.write(f"Punteggio: {st.session_state.score}")
+# Schermata iniziale
+if st.session_state.game_state == 0:
+    st.title("Gioco di Quiz Multiplayer")
+    st.write("Inserisci i nomi dei due giocatori per iniziare:")
+    
+    st.session_state.players[0] = st.text_input("Nome Giocatore 1", key="player1")
+    st.session_state.players[1] = st.text_input("Nome Giocatore 2", key="player2")
+    
+    if st.button("Avvia Gioco"):
+        if st.session_state.players[0] and st.session_state.players[1]:
+            reset_game()  # Resetta e mescola le domande
+            st.session_state.game_state = 1  # Inizia con il giocatore 1
+        else:
+            st.warning("Inserisci entrambi i nomi per continuare.")
 
-            # Nuova domanda
-            if st.session_state.score < 5:  # Fino a 5 domande per esempio
-                st.experimental_rerun()
-            else:
-                st.write("Hai completato il quiz! Complimenti!")
-                st.session_state.score = 0  # Resetta il punteggio
+# Domande per il Giocatore 1
+elif st.session_state.game_state == 1:
+    st.header(f"Turno di {st.session_state.players[0]}")
+    show_question(0)
 
-# Chiamata alla funzione di gioco
-play_quiz()
+# Domande per il Giocatore 2
+elif st.session_state.game_state == 2:
+    st.header(f"Turno di {st.session_state.players[1]}")
+    show_question(1)
+
+# Schermata finale con i punteggi
+elif st.session_state.game_state == 3:
+    st.title("Risultati Finali")
+    st.write(f"**{st.session_state.players[0]}:** {st.session_state.scores[0]} punti")
+    st.write(f"**{st.session_state.players[1]}:** {st.session_state.scores[1]} punti")
+    
+    if st.session_state.scores[0] > st.session_state.scores[1]:
+        st.success(f"Il vincitore è {st.session_state.players[0]}!")
+    elif st.session_state.scores[0] < st.session_state.scores[1]:
+        st.success(f"Il vincitore è {st.session_state.players[1]}!")
+    else:
+        st.info("È un pareggio!")
+
+    if st.button("Gioca di nuovo"):
+        reset_game()
+
+
