@@ -79,6 +79,7 @@ if 'score' not in st.session_state:
     st.session_state.players = {}  # Dizionario per i punteggi dei giocatori
     st.session_state.current_question = 0
     st.session_state.questions = get_random_questions()
+    st.session_state.game_over = False  # Flag per segnare la fine del gioco
 
 # Funzione per la domanda successiva
 def next_question():
@@ -87,39 +88,45 @@ def next_question():
         # Mostra il punteggio finale e il vincitore
         winner = max(st.session_state.players, key=st.session_state.players.get)
         st.write(f'Il gioco è finito! Il vincitore è {winner} con {st.session_state.players[winner]} punti!')
-        st.session_state.players.clear()
-        st.session_state.current_question = 0
-        st.session_state.questions = get_random_questions()
+        st.session_state.game_over = True  # Segnala che il gioco è finito
     else:
-        # Procede alla domanda successiva
-        pass
+        pass  # Continua il gioco
+
+# Funzione per il controllo della risposta
+def check_answer(player_name, answer, correct_answer):
+    if answer == correct_answer:
+        st.session_state.players[player_name] += 1
+        st.write("Risposta corretta!")
+    else:
+        st.write("Risposta sbagliata!")
 
 # Interfaccia del gioco
 st.title('Quiz Game')
 
-# Aggiungi il nome del giocatore
+# Aggiungi il nome del giocatore e permetti a più utenti
 player_name = st.text_input("Inserisci il tuo nome:", "")
 
 if player_name:
     if player_name not in st.session_state.players:
         st.session_state.players[player_name] = 0
 
-    # Mostra la domanda attuale
-    question = st.session_state.questions[st.session_state.current_question]
-    st.write(question["question"])
-    
-    # Mostra le opzioni
-    answer = st.radio("Scegli una risposta:", question["options"])
+    if st.session_state.game_over:
+        st.write("Il gioco è finito! Ricarica la pagina per iniziare una nuova partita.")
+    else:
+        # Mostra la domanda attuale
+        question = st.session_state.questions[st.session_state.current_question]
+        st.write(question["question"])
+        
+        # Mostra le opzioni
+        answer = st.radio("Scegli una risposta:", question["options"])
 
-    # Controlla la risposta
-    if st.button("Invia risposta"):
-        if answer == question["answer"]:
-            st.session_state.players[player_name] += 1
-            st.write("Risposta corretta!")
-        else:
-            st.write("Risposta sbagliata!")
+        # Controlla la risposta
+        if st.button("Invia risposta"):
+            check_answer(player_name, answer, question["answer"])
+            next_question()
 
-        next_question()
+        # Mostra il punteggio corrente
+        st.write(f"Punteggio di {player_name}: {st.session_state.players[player_name]}")
 
 else:
     st.write("Per giocare, inserisci il tuo nome!")
