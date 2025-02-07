@@ -71,6 +71,8 @@ questions = [
 
 
 
+
+
 # Funzione per selezionare domande random
 def get_random_questions():
     return random.sample(questions, 5)
@@ -79,7 +81,7 @@ def get_random_questions():
 if 'game_state' not in st.session_state:
     st.session_state.game_state = 0  # Stato iniziale (0 = gioco non iniziato)
     st.session_state.players = []  # Lista dei giocatori
-    st.session_state.num_players = 0  # Numero di giocatori
+    st.session_state.num_players = 2  # Numero di giocatori fisso a 2
     st.session_state.current_question = 0  # Indice della domanda
     st.session_state.current_player_index = 0  # Indice del giocatore corrente
 
@@ -106,23 +108,19 @@ while True:
     if st.session_state.game_state == 0:  # Se il gioco non è ancora iniziato
         st.title('Benvenuto al Quiz Game!')
         
-        # Seleziona il numero di giocatori
-        num_players = st.number_input("Inserisci il numero di giocatori", min_value=1, max_value=10, value=1, key="num_players_input")
-        st.session_state.num_players = num_players
-        
-        # Aggiungi un campo per il nickname di ogni giocatore
-        for i in range(num_players):
+        # Aggiungi un campo per il nickname di ogni giocatore (2 giocatori fissi)
+        for i in range(2):
             player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}_input")  # Chiave unica per ogni input
             if player_name:
-                # Assicurati che il giocatore venga aggiunto alla lista solo se il nome è stato inserito
-                if len(st.session_state.players) < num_players:  # Aggiungi solo se il numero di giocatori è inferiore al limite
+                # Assicurati che il giocatore venga aggiunto alla lista
+                if len(st.session_state.players) < 2:  # Aggiungi solo se ci sono meno di 2 giocatori
                     st.session_state.players.append({"name": player_name, "score": 0})  
 
         # Bottone per iniziare il gioco
         if st.button("Inizia gioco!", key="start_game_button"):
-            if len(st.session_state.players) == num_players:  # Verifica che i nickname siano inseriti
+            if len(st.session_state.players) == 2:  # Verifica che i nickname siano inseriti
                 st.session_state.game_state = 1  # Inizia il gioco
-                st.write(f"Il gioco è iniziato con {num_players} giocatori: {', '.join([player['name'] for player in st.session_state.players])}")
+                st.write(f"Il gioco è iniziato con 2 giocatori: {', '.join([player['name'] for player in st.session_state.players])}")
                 break  # Esci dal ciclo di configurazione iniziale per entrare nel gioco
     elif st.session_state.game_state == 1:  # Gioco iniziato
         current_player = st.session_state.players[st.session_state.current_player_index]
@@ -153,4 +151,3 @@ while True:
         winner = max(st.session_state.players, key=lambda p: p['score'])
         st.write(f"Il vincitore è {winner['name']} con {winner['score']} punti!")
         break  # Esci dal ciclo del gioco
-
