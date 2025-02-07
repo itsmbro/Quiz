@@ -73,94 +73,46 @@ questions = [
 
 
 
-import streamlit as st
-import random
 
-# Lista di domande e risposte
-questions = [
-    {"question": "Qual è la capitale della Francia?", "options": ["Roma", "Londra", "Parigi", "Berlino"], "answer": "Parigi"},
-    {"question": "Qual è il simbolo chimico dell'acqua?", "options": ["O2", "H2O", "CO2", "N2"], "answer": "H2O"},
-    {"question": "Chi ha scritto 'Il Principe'?", "options": ["Machiavelli", "Dante", "Shakespeare", "Goethe"], "answer": "Machiavelli"},
-    {"question": "Qual è la montagna più alta del mondo?", "options": ["K2", "Everest", "Kangchenjunga", "Lhotse"], "answer": "Everest"},
-    {"question": "In quale anno è stato lanciato il primo uomo sulla luna?", "options": ["1965", "1969", "1971", "1975"], "answer": "1969"},
-]
 
-# Funzione per selezionare domande random
-def get_random_questions():
-    return random.sample(questions, 5)
+# Funzione per miscelare le domande
+def get_question():
+    return random.choice(questions)
 
-# Inizializzazione della variabile di stato
-if 'game_state' not in st.session_state:
-    st.session_state.game_state = 0  # Stato iniziale (0 = gioco non iniziato)
-    st.session_state.players = []  # Lista dei giocatori
-    st.session_state.num_players = 2  # Numero di giocatori fisso a 2
-    st.session_state.current_question = 0  # Indice della domanda
-    st.session_state.current_player_index = 0  # Indice del giocatore corrente
+# Funzione di gioco
+def play_quiz():
+    st.title("Quiz Game")
+    st.write("Benvenuto al gioco del quiz! Rispondi alle domande e ottieni il punteggio!")
 
-# Funzione per avanzare nel gioco
-def next_state():
-    if st.session_state.game_state == 1:  # Gioco iniziato
-        # Aumenta il numero della domanda
-        st.session_state.current_question += 1
-        if st.session_state.current_question >= 5:  # Se tutte le domande sono state fatte
-            st.session_state.game_state = 3  # Passa allo stato finale
-        else:
-            st.session_state.game_state = 2  # Passa allo stato della domanda successiva
-    elif st.session_state.game_state == 2:  # Stato della domanda successiva
-        # Passa al prossimo giocatore
-        st.session_state.current_player_index = (st.session_state.current_player_index + 1) % st.session_state.num_players
-        st.session_state.game_state = 1  # Torna allo stato del gioco
-    elif st.session_state.game_state == 3:  # Gioco finito
-        st.write("Il gioco è finito!")
-        winner = max(st.session_state.players, key=lambda p: p['score'])  # Trova il vincitore
-        st.write(f"Il vincitore è {winner['name']}!")
+    if "score" not in st.session_state:
+        st.session_state.score = 0
 
-# Ciclo principale del gioco (simulato tramite variabili di stato)
-while True:
-    if st.session_state.game_state == 0:  # Se il gioco non è ancora iniziato
-        st.title('Benvenuto al Quiz Game!')
-        
-        # Aggiungi un campo per il nickname di ogni giocatore (2 giocatori fissi)
-        for i in range(2):
-            player_name = st.text_input(f"Inserisci il nome del Giocatore {i + 1}", key=f"player_{i}_input")  # Chiave unica per ogni input
-            if player_name:
-                # Assicurati che il giocatore venga aggiunto alla lista
-                if len(st.session_state.players) < 2:  # Aggiungi solo se ci sono meno di 2 giocatori
-                    st.session_state.players.append({"name": player_name, "score": 0})  
+    # Nome del giocatore
+    player_name = st.text_input("Inserisci il tuo nome:")
+    
+    if player_name:
+        question_data = get_question()
 
-        # Bottone per iniziare il gioco
-        if st.button("Inizia gioco!", key="start_game_button"):
-            if len(st.session_state.players) == 2:  # Verifica che i nickname siano inseriti
-                st.session_state.game_state = 1  # Inizia il gioco
-                st.write(f"Il gioco è iniziato con 2 giocatori: {', '.join([player['name'] for player in st.session_state.players])}")
-                break  # Esci dal ciclo di configurazione iniziale per entrare nel gioco
-    elif st.session_state.game_state == 1:  # Gioco iniziato
-        current_player = st.session_state.players[st.session_state.current_player_index]
-        st.title(f"Turno di {current_player['name']}")
+        # Visualizzare la domanda e le opzioni
+        st.write(question_data["question"])
+        answer = st.radio("Scegli una risposta:", question_data["options"])
 
-        # Seleziona una domanda random
-        question = get_random_questions()[st.session_state.current_question]
-        st.write(question["question"])
-        answer = st.radio("Scegli una risposta:", question["options"])
-
-        if st.button("Rispondi", key=f"answer_button_{st.session_state.current_question}"):
-            if answer == question["answer"]:
-                st.write("Risposta corretta!")
-                current_player["score"] += 1  # Aumenta il punteggio se la risposta è corretta
+        # Verifica della risposta
+        if st.button("Conferma risposta"):
+            if answer == question_data["answer"]:
+                st.session_state.score += 1
+                st.success("Risposta corretta!")
             else:
-                st.write("Risposta sbagliata!")
+                st.error("Risposta errata.")
 
-            # Avanza allo stato successivo
-            next_state()
+            st.write(f"Punteggio: {st.session_state.score}")
 
-    elif st.session_state.game_state == 2:  # Stato della domanda successiva
-        st.write(f"Punteggio di {current_player['name']}: {current_player['score']}")
-        st.button("Prossima domanda", key="next_question_button")
-        next_state()
+            # Nuova domanda
+            if st.session_state.score < 5:  # Fino a 5 domande per esempio
+                st.experimental_rerun()
+            else:
+                st.write("Hai completato il quiz! Complimenti!")
+                st.session_state.score = 0  # Resetta il punteggio
 
-    elif st.session_state.game_state == 3:  # Gioco finito
-        st.write("Il gioco è finito!")
-        winner = max(st.session_state.players, key=lambda p: p['score'])
-        st.write(f"Il vincitore è {winner['name']} con {winner['score']} punti!")
-        break  # Esci dal ciclo del gioco
-
+# Chiamata alla funzione di gioco
+play_quiz()
