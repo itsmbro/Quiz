@@ -69,7 +69,7 @@ questions = [
     {"question": "Cos'è un superconduttore?", "options": ["Un materiale che ha resistenza elettrica nulla a basse temperature", "Un materiale che conduce calore velocemente", "Un materiale che emette luce", "Un materiale che assorbe energia"], "answer": "Un materiale che ha resistenza elettrica nulla a basse temperature"}
     ]
 
-players=[]
+players=["",""]
 
 # Inizializza lo stato della sessione
 if 'game_state' not in st.session_state:
